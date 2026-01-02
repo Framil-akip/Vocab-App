@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="manifest.json">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vocabulary App</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 15px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .box {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .add-btn {
+      background: #4CAF50;
+      color: white;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .update-btn {
+      background: #2196F3;
+      color: white;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      gap: 10px;
+    }
+
+    .text {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .word {
+      font-weight: bold;
+    }
+
+    .meaning {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .edit-btn {
+      background: #ffc107;
+    }
+
+    .delete-btn {
+      background: #f44336;
+      color: white;
+    }
+
+    .search-box {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📘 My Vocabulary</h1>
+
+<div class="box">
+  <input id="word" placeholder="Word">
+  <textarea id="meaning" placeholder="Meaning"></textarea>
+
+  <button class="add-btn" onclick="addWord()">➕ Add</button>
+  <button class="update-btn" onclick="updateWord()" style="display:none;">✏️ Update</button>
+</div>
+
+<input class="search-box" id="search" placeholder="🔍 Search word or meaning..." onkeyup="searchWords()">
+
+<div id="list"></div>
+
+<script>
+  let words = JSON.parse(localStorage.getItem("vocab")) || [];
+  let editIndex = null;
+
+  function save() {
+    localStorage.setItem("vocab", JSON.stringify(words));
+  }
+
+  function addWord() {
+    const word = document.getElementById("word").value.trim();
+    const meaning = document.getElementById("meaning").value.trim();
+
+    if (!word || !meaning) return alert("Fill both fields");
+
+    words.push({ word, meaning });
+    save();
+    clearForm();
+    showWords(words);
+  }
+
+  function editWord(index) {
+    document.getElementById("word").value = words[index].word;
+    document.getElementById("meaning").value = words[index].meaning;
+
+    editIndex = index;
+    document.querySelector(".add-btn").style.display = "none";
+    document.querySelector(".update-btn").style.display = "block";
+  }
+
+  function updateWord() {
+    words[editIndex].word = document.getElementById("word").value;
+    words[editIndex].meaning = document.getElementById("meaning").value;
+
+    save();
+    clearForm();
+    showWords(words);
+  }
+
+  function deleteWord(index) {
+    if (confirm("Delete this word?")) {
+      words.splice(index, 1);
+      save();
+      showWords(words);
+    }
+  }
+
+  function clearForm() {
+    document.getElementById("word").value = "";
+    document.getElementById("meaning").value = "";
+    editIndex = null;
+    document.querySelector(".add-btn").style.display = "block";
+    document.querySelector(".update-btn").style.display = "none";
+  }
+
+  function showWords(list) {
+    const container = document.getElementById("list");
+    container.innerHTML = "";
+
+    list.forEach((item, index) => {
+      container.innerHTML += `
+        <div class="row">
+          <div class="text">
+            <div class="word">${item.word}</div>
+            <div class="meaning">${item.meaning}</div>
+          </div>
+          <div class="actions">
+            <button class="edit-btn" onclick="editWord(${index})">✏️</button>
+            <button class="delete-btn" onclick="deleteWord(${index})">🗑️</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function searchWords() {
+    const query = document.getElementById("search").value.toLowerCase();
+    const filtered = words.filter(w =>
+      w.word.toLowerCase().includes(query) ||
+      w.meaning.toLowerCase().includes(query)
+    );
+    showWords(filtered);
+  }
+
+  showWords(words);
+</script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("Service Worker Registered"));
+  }
+</script>
+</body>
+</html>
