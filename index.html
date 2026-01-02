@@ -8,112 +8,142 @@
   <title>Vocabulary App</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 15px;
-    }
+   * {
+  box-sizing: border-box;
+}
 
-    h1 {
-      text-align: center;
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
 
-    .box {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
+/* Main container */
+.app {
+  max-width: 420px;
+  margin: auto;
+  padding: 16px;
+  padding-bottom: 40px;
+}
 
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      font-size: 16px;
-    }
+/* Header */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    button {
-      border: none;
-      cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 16px;
-    }
+/* Card box */
+.box {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
 
-    .add-btn {
-      background: #4CAF50;
-      color: white;
-      width: 100%;
-      margin-top: 10px;
-    }
+/* Inputs */
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
 
-    .update-btn {
-      background: #2196F3;
-      color: white;
-      width: 100%;
-      margin-top: 10px;
-    }
+/* Buttons */
+button {
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: white;
-      padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-      gap: 10px;
-    }
+.add-btn {
+  background: #4CAF50;
+  color: white;
+  width: 100%;
+  margin-top: 12px;
+}
 
-    .text {
-      flex: 1;
-      overflow: hidden;
-    }
+.update-btn {
+  background: #2196F3;
+  color: white;
+  width: 100%;
+  margin-top: 12px;
+}
 
-    .word {
-      font-weight: bold;
-    }
+/* Search */
+.search-box {
+  margin: 15px 0;
+  width: 100%;
+}
 
-    .meaning {
-      font-size: 14px;
-      color: #555;
-    }
+/* Word list */
+.row {
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
 
-    .actions {
-      display: flex;
-      gap: 6px;
-    }
+.text {
+  flex: 1;
+  overflow-wrap: break-word;
+}
 
-    .edit-btn {
-      background: #ffc107;
-    }
+.word {
+  font-weight: bold;
+}
 
-    .delete-btn {
-      background: #f44336;
-      color: white;
-    }
+.meaning {
+  font-size: 14px;
+  color: #555;
+}
 
-    .search-box {
-      margin-bottom: 15px;
-    }
+/* Buttons on right */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  background: #ffc107;
+}
+
+.delete-btn {
+  background: #f44336;
+  color: white;
+}
+
   </style>
 </head>
 
 <body>
+<div class="app">
 
-<h1>📘 My Vocabulary</h1>
+  <h1>📘 My Vocabulary</h1>
 
-<div class="box">
-  <input id="word" placeholder="Word">
-  <textarea id="meaning" placeholder="Meaning"></textarea>
+  <div class="box">
+    <input id="word" placeholder="Word">
+    <textarea id="meaning" placeholder="Meaning"></textarea>
 
-  <button class="add-btn" onclick="addWord()">➕ Add</button>
-  <button class="update-btn" onclick="updateWord()" style="display:none;">✏️ Update</button>
+    <button class="add-btn" onclick="addWord()">➕ Add</button>
+    <button class="update-btn" onclick="updateWord()" style="display:none;">✏️ Update</button>
+  </div>
+
+  <input class="search-box" id="search" placeholder="🔍 Search word or meaning..." onkeyup="searchWords()">
+
+  <div id="list"></div>
+
 </div>
 
-<input class="search-box" id="search" placeholder="🔍 Search word or meaning..." onkeyup="searchWords()">
-
-<div id="list"></div>
 
 <script>
   let words = JSON.parse(localStorage.getItem("vocab")) || [];
